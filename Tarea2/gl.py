@@ -76,7 +76,7 @@ class Renderer(object):
         self.glClear()
         self.glViewport(0, 0, width, height)
 
-
+   
     def glLine(self, v0, v1, color = None):
         x0 = v0.x
         x1 = v1.x
@@ -115,6 +115,23 @@ class Renderer(object):
                 y += 1 if y0 < y1 else -1
                 limit += 1
 
+    def glDrawPol(self, polygon):
+        for i in range(len(polygon)):
+            x0 = polygon[i][0]
+            y0 = polygon[i][1]
+            x1 = polygon[(i + 1) % len(polygon)][0]
+            y1 = polygon[(i + 1) % len(polygon)][1]
+
+            xArray = [x0,x1]
+            yArray = [y0,y1]
+
+            self.glLine(V2(x0, y0), V2(x1, y1))
+
+            for i in range (min(xArray), max(xArray)):
+                self.glLine(V2(0,min(yArray)), V2(0, max(yArray)), color(1,0,0))
+
+
+    
 
     def glFinish(self, filename):
         #Crea un archivo BMP y lo llena con la información dentro de self.pixels
