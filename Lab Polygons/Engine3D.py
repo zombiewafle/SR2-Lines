@@ -4,12 +4,13 @@ from numpy import sin, cos, square
 import random
 
 
-width = 3000
-height = 4000
+width = 1920 
+height = 1080
 
 rend = Renderer(width, height)
 
-rend.glClearColor(0.5,0.5,0.2)
+#rend.glClearColor(0,0,0)
+#rend.glColor(0,0,0)
 
 #rend.glViewport(0, 0, width, height)
 
@@ -35,10 +36,15 @@ rend.glClearColor(0.5,0.5,0.2)
 #
 #
 #Square
-square=[(450,1000),(450,1300),(850,1000),(850,1300),(450,1300),(850,1300),(450,1000),(850,1000)]
+#square=[(450,1000),(450,1300),(850,1000),(850,1300),(450,1300),(850,1300),(450,1000),(850,1000)]
+Square = [(321, 335), (288, 286), (339, 251), (374, 302)]
+Star = [(165, 380), (185, 360),  (180, 330) , (207, 345),  (233, 330) , (230, 360) , (250, 380) , (220, 385),  (205, 410),  (193, 383)]
+Triangle = [(377, 249) ,(411, 197), (436, 249)]
 tetera=[(413, 177) ,(448, 159) ,(502, 88) ,(553, 53), (535, 36) ,(676, 37) ,(660, 52),
 (750, 145) ,(761, 179) ,(672, 192) ,(659, 214) ,(615, 214) ,(632, 230) ,(580, 230),
 (597, 215) ,(552, 214) ,(517, 144) ,(466, 180)]
+Tetera2= [(682, 175) ,(708, 120), (735, 148), (739, 170)]
+#rend.glLoadModel("models/model.obj",V2(width/2, height/2), V2(500,500))
 #rend.glLine(V2(450, 1000), V2(450, 1300), color(1,0,0))
 #rend.glLine(V2(850, 1000), V2(850, 1300), color(1,0,0))
 #rend.glLine(V2(450, 1300), V2(850, 1300), color(1,0,0))
@@ -52,8 +58,14 @@ tetera=[(413, 177) ,(448, 159) ,(502, 88) ,(553, 53), (535, 36) ,(676, 37) ,(660
 #rend.glLine(V2(1600, 1250), V2(1600, 1600), color(1,0,0))
 #rend.glLine(V2(1000, 1250), V2(1600, 1250), color(1,0,0))
 
-rend.glDrawPol(square)
+rend.glDrawPol(tetera)
+rend.glDrawPol(Tetera2)
+rend.glDrawPol(Star)
+rend.glDrawPol(Triangle)
+rend.glDrawPol(Square)
 
+rend.glFillPol(color(1,0,0))
+#rend.glTriangle(V2(10, 70),  V2(50, 160), V2(70, 80), color(random.random(), random.random(),random.random()))
 #for x in range (square):
  #  rend.glLine()
 

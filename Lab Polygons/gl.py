@@ -1,5 +1,14 @@
+
+from os import curdir
+from posixpath import normpath
 import struct
 from collections import namedtuple
+
+from numpy.lib.polynomial import poly
+from obj import Obj
+import random
+import numpy as np
+
 
 V2 = namedtuple('Point2', ['x', 'y'])
 
@@ -29,8 +38,8 @@ WHITE = color(1,1,1)
 class Renderer(object):
     def __init__(self, width, height):
         #Constructor
-        self.curr_color = BLACK
-        self.clear_color = WHITE
+        self.curr_color = WHITE
+        self.clear_color = BLACK
         self.glCreateWindow(width, height)
 
 
@@ -83,6 +92,11 @@ class Renderer(object):
         y0 = v0.y
         y1 = v1.y
 
+        if x0 == x1 and y0 == y1:
+            self.glPoint(x0,y1,color)
+            return
+
+
         dx = abs(x1 - x0)
         dy = abs(y1 - y0)
 
@@ -116,33 +130,115 @@ class Renderer(object):
                 limit += 1
 
     def glDrawPol(self, polygon):
-
-        xArray = []
-        yArray = []
-
+        
         for i in range(len(polygon)):
             x0 = polygon[i][0]
             y0 = polygon[i][1]
             x1 = polygon[(i + 1) % len(polygon)][0]
             y1 = polygon[(i + 1) % len(polygon)][1]
 
-
             self.glLine(V2(x0, y0), V2(x1, y1))
 
-            xArray.append(x0)
-            yArray.append(y0)
+        #for y in range(y0, y1):
+        #    for x in range(x0, x1):
+        #        y += 1
+        #        x += 1
+        #        self.glLine(V2(x0,y0), V2(x,y))
 
-            xArray.append(x1)
-            yArray.append(y1)
-
-
-
-            for i in range (min(xArray), max(xArray)):
+    def glFillPol(self, paintColor=None):    
+        for y in range(self.height):
+            for x in range(self.width):
+                if (self.pixels[x][y] == self.curr_color):
+                    #self.glPoint(x,y, WHITE)
+                    if (self.pixels[x+1][y] != self.curr_color):
+                        x0 =+ 1
+                        x0 = x0
+                        y0 =+ 1
+                        y0 = y0
+                        #while x < int(min(polygon)):
+                        self.glPoint(x,y, paintColor)
+                        self.glLine(V2(x0,y0), V2(x,y), paintColor)
+                        #self.glLine(V2(x0,y0), V2(x,y), paintColor)
+                        
                 
-                self.glLine(V2(0,min(yArray)), V2(0, max(yArray)), color(1,0,0))
+
+                
+
+    def glLoadModel(self, filename, translate = V2(0.0,0.0), scale = V2(1.0,1.0)):
+
+        model = Obj(filename)
+
+        for face in model.faces:
+            vertCount = len(face)
+
+            if vertCount == 3:
+                index0 = face[0][0] - 1
+                index1 = face[1][0] - 1
+                index2 = face[2][0] - 1
+
+                vert0 = model.vertices[index0]
+                vert1 = model.vertices[index1]
+                vert2 = model.vertices[index2]
+
+                a = V2(int(vert0[0] * scale.x + translate.x), int(vert0[1] * scale.y + translate.y) )
+                b = V2(int(vert1[0] * scale.x + translate.x), int(vert1[1] * scale.y + translate.y) )
+                c = V2(int(vert2[0] * scale.x + translate.x), int(vert2[1] * scale.y + translate.y) )
+                
+
+                self.glTriangle(a, b, c, color(random.random(), random.random(), random.random()))
 
 
-    
+    def glTriangle(self, A, B, C, color = None):
+
+        if A.y < B.y:
+            A, B = B, A
+        if A.y < C.y:
+            A, C = C, A
+        if B.y < C.y:
+            B, C = C, B
+
+        def flatBottomTriangle(v1, v2, v3):
+            try:
+                d_21 = (v2.x - v1.x) / (v2.y - v1.y)
+                d_31 = (v3.x - v1.x) / (v3.y - v1.y)
+            except:
+                pass
+            else:
+                x1 = v2.x
+                x2 = v3.x
+                for y in range(v2.y, v1.y + 1):
+                    self.glLine(V2(int(x1),y), V2(int(x2),y), color)
+                    x1 += d_21
+                    x2 += d_31
+
+        def flatTopTriangle(v1, v2, v3):
+            try:
+                d_31 = (v3.x - v1.x) / (v3.y - v1.y)
+                d_32 = (v3.x - v2.x) / (v3.y - v2.y)
+            except:
+                pass
+            else:
+                x1 = v3.x
+                x2 = v3.x
+
+                for y in range(v3.y, v1.y + 1):
+                    self.glLine(V2(int(x1),y), V2(int(x2),y), color)
+                    x1 += d_31
+                    x2 += d_32
+
+        if B.y == C.y:
+            # triangulo con base inferior plana
+            flatBottomTriangle(A, B, C)
+        elif A.y == B.y:
+            # triangulo con base superior plana
+            flatTopTriangle(A, B, C)
+        else:
+            # dividir el triangulo en dos
+            # dibujar ambos casos
+            # Teorema de intercepto
+            D = V2(A.x + ((B.y - A.y) / (C.y - A.y)) * (C.x - A.x)   , B.y)
+            flatBottomTriangle(A, B, D)
+            flatTopTriangle(B, D, C)
 
     def glFinish(self, filename):
         #Crea un archivo BMP y lo llena con la información dentro de self.pixels
