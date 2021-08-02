@@ -64,7 +64,8 @@ rend.glDrawPol(Star)
 rend.glDrawPol(Triangle)
 rend.glDrawPol(Square)
 
-rend.glFillPol(color(1,0,0))
+rend.glFillPol(Square, color(1,0,0))
+
 #rend.glTriangle(V2(10, 70),  V2(50, 160), V2(70, 80), color(random.random(), random.random(),random.random()))
 #for x in range (square):
  #  rend.glLine()

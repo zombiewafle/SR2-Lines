@@ -145,16 +145,17 @@ class Renderer(object):
         #        x += 1
         #        self.glLine(V2(x0,y0), V2(x,y))
 
-    def glFillPol(self, paintColor=None):    
+    def glFillPol(self,polygon, paintColor=None):    
+        
         for y in range(self.height):
             for x in range(self.width):
                 if (self.pixels[x][y] == self.curr_color):
                     #self.glPoint(x,y, WHITE)
-                    if (self.pixels[x+1][y] != self.curr_color):
+                    if (self.pixels[x-1][y-1] != self.curr_color):
                         x0 =+ 1
-                        x0 = x0
+                        #x0 = x0
                         y0 =+ 1
-                        y0 = y0
+                        #y0 = y0
                         #while x < int(min(polygon)):
                         self.glPoint(x,y, paintColor)
                         self.glLine(V2(x0,y0), V2(x,y), paintColor)
