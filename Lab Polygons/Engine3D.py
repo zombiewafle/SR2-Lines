@@ -58,13 +58,13 @@ Tetera2= [(682, 175) ,(708, 120), (735, 148), (739, 170)]
 #rend.glLine(V2(1600, 1250), V2(1600, 1600), color(1,0,0))
 #rend.glLine(V2(1000, 1250), V2(1600, 1250), color(1,0,0))
 
-rend.glDrawPol(tetera)
-rend.glDrawPol(Tetera2)
-rend.glDrawPol(Star)
+#rend.glDrawPol(tetera)
+#rend.glDrawPol(Tetera2)
+#rend.glDrawPol(Star)
 rend.glDrawPol(Triangle)
-rend.glDrawPol(Square)
+#rend.glDrawPol(Square)
 
-rend.glFillPol(Square, color(1,0,0))
+rend.glFillPol(Triangle, color(1,0,0))
 
 #rend.glTriangle(V2(10, 70),  V2(50, 160), V2(70, 80), color(random.random(), random.random(),random.random()))
 #for x in range (square):

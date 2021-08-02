@@ -146,19 +146,49 @@ class Renderer(object):
         #        self.glLine(V2(x0,y0), V2(x,y))
 
     def glFillPol(self,polygon, paintColor=None):    
-        
+        xMin = 0
+        xMax = 0
+        yMin = 0
+        yMax = 0
+        lenPol = len(polygon)
+        for i in range(lenPol):
+            x0 = polygon[i][0]
+            y0 = polygon[i][1]
+            x1 = polygon[(i + 1) % lenPol][0]
+            y1 = polygon[(i + 1) % lenPol][1]
+            if xMin == 0 and yMin == 0:
+                xMin, yMin = x0, y0
+            if (x0 < xMin):
+                xMin = x0
+            if (x1 > xMax):
+                xMax = x1
+            if (y0 < yMin):
+                yMin = y0
+            if (y1 > yMax):
+                yMax = y1
+                
+            #self.glLine(V2(x0, y0), V2(x1, y1))
+        #print(xMin, xMax, yMin, yMax)
+
         for y in range(self.height):
             for x in range(self.width):
                 if (self.pixels[x][y] == self.curr_color):
                     #self.glPoint(x,y, WHITE)
                     if (self.pixels[x-1][y-1] != self.curr_color):
-                        x0 =+ 1
+                        #x0 =+ 1
                         #x0 = x0
-                        y0 =+ 1
+                        #y0 =+ 1
                         #y0 = y0
                         #while x < int(min(polygon)):
                         self.glPoint(x,y, paintColor)
-                        self.glLine(V2(x0,y0), V2(x,y), paintColor)
+                        if(self.pixels[x+1][y+1] != self.curr_color):
+                            x0 += 1
+                            y0 += 1
+                            self.glLine(V2(xMin,yMin), V2(x,y), paintColor)
+                            #self.glLien
+                            
+                        else:
+                            pass
                         #self.glLine(V2(x0,y0), V2(x,y), paintColor)
                         
                 
