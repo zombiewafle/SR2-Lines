@@ -169,29 +169,177 @@ class Renderer(object):
                 
             #self.glLine(V2(x0, y0), V2(x1, y1))
         #print(xMin, xMax, yMin, yMax)
+        checkPaint = False
+        checkHor = False
+        checkVer = False
+        x0, x1, x2, x3 = 0,0,0,0
+        y0,y1 = 0,0
+        finishPaint = False
 
-        for y in range(self.height):
-            for x in range(self.width):
-                if (self.pixels[x][y] == self.curr_color):
+
+        for y in range(yMin, yMax):
+            for x in range(xMin, xMax):
+                if(self.pixels[x][y] == self.curr_color):
+                    if (self.pixels[x+1][y] != paintColor):
+                        x+=1
+                        x0 = x1 = x2 = x
+                        
+                        while x <= xMax:
+                            print("Hola2")
+                            if self.pixels[x][y]  != self.curr_color:
+                                if y not in [yMin, yMax]:
+                                    x0 = x1 = x2 = x
+                                    y0 = y1 = y
+                                    checkPaint = False
+                                    checkHor = False
+                                    checkVer = False
+                                    while True:
+                                        if y0 != yMin:
+                                            y0 -= 1
+                                            if(self.pixels[x][y0] == self.curr_color):
+                                                checkVer = True
+                                            else:
+                                                checkVer = False
+                                            
+        #
+                                        if y1 != yMax:
+                                            y1 += 1
+                                            if (self.pixels[x][y1] == self.curr_color):
+                                                checkVer = True
+                                            else:
+                                                checkVer = False
+
+                                        if x0 != xMin:
+                                            x0 -= 1
+                                            if(self.pixels[x0][y] == self.curr_color):
+                                                checkHor = True
+                                            else:
+                                                checkHor = False
+
+                                        if x1 != xMax:
+                                            x1 += 1
+                                            if(self.pixels[x1][y] == self.curr_color):
+                                                checkHor = True
+                                            else:
+                                                checkHor = False
+
+
+                                        if checkVer == True and checkHor == True:
+                                            break
+                                        elif checkVer == False and checkHor == False:
+                                            paint = True
+                                        
+                                        else: 
+                                            break
+                                            
+                                        
+                                                
+                                        
+                                        #if (self.pixels[x][y] == self.curr_color):
+                                        if(paint == True):
+                                            print("hola3")
+                                            self.glLine(V2(x0, y), V2(x1, y), paintColor)
+                                            #x +=1
+                                            #y +=1
+                                        break        
+                            x +=1
+                                #if x <= xMax:   
+                                #    print("hola3")
+                                #    finishPaint = True
+                                ##if finishPaint == True:
+                                #    break
+#
+                                    
+
+
+
+                        #y += 1
+                        #y0 = y
+
+                        #x1 += 1
+                        #if x not in [xMin, xMax]:
+                        #    #x += 1
+#
+                        #    if(self.pixels[x][y] != self.curr_color):
+                        #        while x <= xMax:
+                        #            self.glPoint(V2(x0,y), V2(x-1,y), paintColor)
+#
+        #for y in range(self.height):
+        #    for x in range(self.width):
+        #        if(self.pixels[x][y] == self.curr_color):
+        #            #x += 1
+        #            #x1 += 1
+        #            #x2 += 1
+        #            #x3 += 1
+        #            print("hola")
+        #            if y not in [yMin, yMax]:
+        #                checkPaint = False, 
+        #                checkHor = False
+        #                checkVer = False
+        #                if(self.pixels[x+1][y] != self.curr_color):
+        #                    print("hola1")
+        #                    while x <= xMax:
+        #                        checkPaint = True
+        #                        print("hola2")
+        #                        if(self.pixels[x][y] == self.curr_color):
+        #                            #y +=1
+        #                            print("hola3")
+        #                            if(checkPaint == True):#self.pixels[x][y+1] == self.curr_color):
+        #                                print("hola4")
+        #                                while y <= yMax:
+        #                                    print("hola5")
+        #                                    x += 1
+        #                                    y += 1
+        #                                    self.glPoint(x0,y0, paintColor)
+        #                                    if(self.pixels[x][y] == self.curr_color):
+        #                                        break
+#
+                #if(self.pixels[x+1][y] == self.curr_color):
+#
+                #    x0 += 1
+                #    x0 = x
+#
+                ##y0 += 1
+                ##y0 = y
+                #
+                #x1 += 1
+                #x2 += 1
+                #x3 += 1
+                ##print("hol")
+#
+                #while x >= xMin:
+                #    paint = False
+                #    checkVer = False
+                #    checkHor = False
+#
+#
+                #    if i not in [yMin, yMax]:
+                #        print("Hola")
+                #
+                #    elif i in [yMin, yMax]:
+                #        print("hola2")
+                #        for x in [xMin, xMax]:
+                #            print("hola3")
+                #            
+                #            while checkHor== False and checkVer==False:
+                #                paint = True 
+                #                if(paint == True):
+                #                    self.glPoint(x,y, paintColor)
+                #    #self.glLine(V2(xMin,yMin), V2(x,y), paintColor)
+#
+                #        
+                #        #self.glLine(V2(x0,y0), V2(x,y), paintColor)
+                    
+                
+#if (self.pixels[x][y] == self.curr_color):
                     #self.glPoint(x,y, WHITE)
-                    if (self.pixels[x-1][y-1] != self.curr_color):
+                    #if (self.pixels[x-1][y-1] != self.curr_color):
                         #x0 =+ 1
                         #x0 = x0
                         #y0 =+ 1
                         #y0 = y0
                         #while x < int(min(polygon)):
-                        self.glPoint(x,y, paintColor)
-                        if(self.pixels[x+1][y+1] != self.curr_color):
-                            x0 += 1
-                            y0 += 1
-                            self.glLine(V2(xMin,yMin), V2(x,y), paintColor)
-                            #self.glLien
-                            
-                        else:
-                            pass
-                        #self.glLine(V2(x0,y0), V2(x,y), paintColor)
-                        
-                
+                     #   self.glPoint(x,y, paintColor)
 
                 
 
