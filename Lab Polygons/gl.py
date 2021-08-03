@@ -175,6 +175,8 @@ class Renderer(object):
         x0, x1, x2, x3 = 0,0,0,0
         y0,y1 = 0,0
         finishPaint = False
+        xLocalMax, xLocalMin  = 0,0
+        var1, var2 = 0,0
 
 
         for y in range(yMin, yMax):
@@ -183,8 +185,10 @@ class Renderer(object):
                     if (self.pixels[x+1][y] != paintColor):
                         x+=1
                         x0 = x1 = x2 = x
-                        
+                        xLocalMax = max(self.pixels[x])[0]
+                        #xLocalMin = min(self.pixels[x])[1]
                         while x <= xMax:
+                            x
                             print("Hola2")
                             if self.pixels[x][y]  != self.curr_color:
                                 if y not in [yMin, yMax]:
@@ -219,7 +223,7 @@ class Renderer(object):
                                         if x1 != xMax:
                                             x1 += 1
                                             if(self.pixels[x1][y] == self.curr_color):
-                                                checkHor = True
+                                                checkHor = False
                                             else:
                                                 checkHor = False
 
@@ -238,7 +242,7 @@ class Renderer(object):
                                         #if (self.pixels[x][y] == self.curr_color):
                                         if(paint == True):
                                             print("hola3")
-                                            self.glLine(V2(x0, y), V2(x1, y), paintColor)
+                                            self.glLine(V2(x0, y), V2((x)-int((y)/xLocalMax), y), paintColor)
                                             #x +=1
                                             #y +=1
                                         break        
