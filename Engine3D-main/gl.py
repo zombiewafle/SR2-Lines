@@ -320,6 +320,7 @@ class Renderer(object):
             vertCount = len(face)
 
             vert0 = model.vertices[face[0][0] - 1]
+            
             vert1 = model.vertices[face[1][0] - 1]
             vert2 = model.vertices[face[2][0] - 1]
 
@@ -337,12 +338,12 @@ class Renderer(object):
                 vt2 = model.texcoords[face[3][1] - 1]
                 d = self.glTransform(vert3, translate, scale)
 
-            var1= ml.subVectors(vert1, vert0)
-            var2 = ml.subVectors(vert2, vert0)
-
-
+            
             normal = ml.crossProduct(ml.subVectors(vert1,vert0), ml.subVectors(vert2,vert0))
+            #b = ml.norm(normal)
+            #print(b)
             normal = normal / np.linalg.norm(normal) # la normalizamos
+            #normal = normal / ml.norm(np.float64(normal)) # la normalizamos
             intensity = ml.dotProduct(normal, -light)
 
             if intensity > 1:
@@ -354,27 +355,6 @@ class Renderer(object):
             self.glTriangle_bc(a, b, c, texCoords = (vt0,vt1,vt2), texture = texture, intensity = intensity)
             if vertCount == 4:
                 self.glTriangle_bc(a, c, d, texCoords = (vt0,vt2,vt3), texture = texture, intensity = intensity)
-            
+
+
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

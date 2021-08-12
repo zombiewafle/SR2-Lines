@@ -7,7 +7,6 @@
 #Variables de prueba
 
 import numpy as np
-from array import array
 
 
 a = [1,2,3]
@@ -18,6 +17,7 @@ def dotProduct(a,b):
     dotProduct = 0
     for x,y in zip(a,b):
         dotProduct = dotProduct + (x*y)
+    return dotProduct
     
     #print(dotProduct)
 
@@ -35,6 +35,7 @@ def sumVectors(a,b):
     sub3 = a[2] + b[2]
     sub = [sub1,sub2,sub3]
     
+    return sub
 
    # print(i)
 
@@ -45,8 +46,9 @@ def subVectors(a,b):
     sub1 = a[0] - b[0]
     sub2 = a[1] - b[1]
     sub3 = a[2] - b[2]
-    sub = np.array([sub1,sub2,sub3])
+    sub = ([sub1,sub2,sub3])
     
+    return sub
     #print(sub)
 
 #subVectors(a,b)
@@ -58,8 +60,30 @@ def crossProduct(a,b):
     crossProduct2 = ((a[2])*(b[0])) - ((a[0])*(b[2]))
     crossProduct3 = ((a[0])*(b[1])) - ((a[1])*(b[0]))
 
-    crossProduct = np.array([crossProduct1 , crossProduct2 , crossProduct3])
+    crossProduct = ([crossProduct1 , crossProduct2 , crossProduct3])
+
+    return crossProduct
     
     #print(np.array(crossProduct))
 
 #crossProduct(a,b)
+
+#def normalize_list(a):
+#    max_valueA = max(a)
+#    min_valueA = min(a)
+#    for i in range(0, len(a)):
+#        a[i] = (a[i] - min_valueA) / (max_valueA - min_valueA)
+#        
+#    return a
+
+def norm(a):
+    for i in range(0, len(a)):
+        sqrt = (a[i])**2
+        result = (sqrt)**0.5
+    return result#, print(result)
+
+
+#norm(a)
+#b = np.linalg.norm(a)
+#print(b)
+#normalize_list(a)
