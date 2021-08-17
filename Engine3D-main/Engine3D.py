@@ -20,7 +20,7 @@ rend.glLoadModel("models/model.obj",
                  modelTexture,
                  translate = modelPosition,
                  scale = V3(3,3,3),
-                 rotate = V3(0, 0, 0) )
+                 rotate = V3(0, 0, 0))
 
 
 rend.glFinish("output.bmp")
