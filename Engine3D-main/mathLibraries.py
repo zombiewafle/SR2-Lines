@@ -7,8 +7,11 @@
 #Variables de prueba
 
 import numpy as np
+import struct
+from math import cos, sin, pi, tan
 from collections import namedtuple
 V4 = namedtuple('Point4', ['x', 'y', 'z', 'w'])
+V3 = namedtuple('Point3', ['x', 'y', 'z'])
 
 a = [1,2,3]
 b = [4,5,6]
@@ -79,11 +82,11 @@ def crossProduct(a,b):
 #        
 #    return a
 
-def norm(a):
-    for i in range(0, len(a)):
-        sqrt = (a[i])**2
-        result = (sqrt)**0.5
-    return result#, print(result)
+#def norm(a):
+#    for i in range(0, len(a)):
+#        sqrt = (a[i])**2
+#        result = (sqrt)**0.5
+#    return result#, print(result)
 
 
 #norm(a)
@@ -91,7 +94,7 @@ def norm(a):
 #print(b)
 #normalize_list(a)
 
-def createMatrix(row, col, listOfLists):
+def createMatrix(row, col, listOfLists, multi = 1):
     matrix = []
     for i in range(row):
         
@@ -99,17 +102,31 @@ def createMatrix(row, col, listOfLists):
         for j in range(col):
             
             # you need to increment through dataList here, like this:
-            rowList.append(listOfLists[row * i + j])    
+            rowList.append((listOfLists[row * i + j]) * multi)    
                     
         matrix.append(rowList)
-        
-        
+    
+    return matrix
 
-        #for i in range(len(matrix)):
-        #    for j in range(len(matrix[0])):
-        #        print('%3d'%matrix[i][j],end='')
-        #    print()
-    return matrix#,print(matrix)
+#def createMatrix(row, col, listOfLists):
+#    matrix = []
+#    for i in range(row):
+#        
+#        rowList = []
+#        for j in range(col):
+#            
+#            # you need to increment through dataList here, like this:
+#            rowList.append(listOfLists[row * i + j])    
+#                    
+#        matrix.append(rowList)
+#        
+#        
+#
+#        #for i in range(len(matrix)):
+#        #    for j in range(len(matrix[0])):
+#        #        print('%3d'%matrix[i][j],end='')
+#        #    print()
+#    return matrix#,print(matrix)
 
 
 #createMatrix(3,4,matrix)
@@ -198,3 +215,131 @@ def multyMatrix (Matrix, Matrix2):
 #
 #
 ##multyMatrix4X4(hola2,hola2)
+
+
+def transposeMatrix(m):
+    return map(list,zip(*m))
+
+def getMatrixMinor(m,i,j):
+    return [row[:j] + row[j+1:] for row in (m[:i]+m[i+1:])]
+
+def getMatrixDeternminant(m):
+    #base case for 2x2 matrix
+    if len(m) == 2:
+        return m[0][0]*m[1][1]-m[0][1]*m[1][0]
+
+    determinant = 0
+    for c in range(len(m)):
+        determinant += ((-1)**c)*m[0][c]*getMatrixDeternminant(getMatrixMinor(m,0,c))
+    return determinant
+
+def getMatrixInverse(m):
+    determinant = getMatrixDeternminant(m)
+    #special case for 2x2 matrix:
+    if len(m) == 2:
+        return [[m[1][1]/determinant, -1*m[0][1]/determinant],
+                [-1*m[1][0]/determinant, m[0][0]/determinant]]
+
+    #find matrix of cofactors
+    cofactors = []
+    for r in range(len(m)):
+        cofactorRow = []
+        for c in range(len(m)):
+            minor = getMatrixMinor(m,r,c)
+            cofactorRow.append(((-1)**(r+c)) * getMatrixDeternminant(minor))
+        cofactors.append(cofactorRow)
+    cofactors = transposeMatrix(cofactors)
+    for r in range(len(cofactors)):
+        for c in range(len(cofactors)):
+            cofactors[r][c] = cofactors[r][c]/determinant
+    return cofactors
+
+def pi():
+    pi = 3.1415926535897932384626433
+    return pi
+
+#pi()
+
+def transpose(matrix):
+    rows = len(matrix)
+    columns = len(matrix[0])
+
+    matrix_T = []
+    for j in range(columns):
+        row = []
+        for i in range(rows):
+           row.append(matrix[i][j])
+        matrix_T.append(row)
+
+    return matrix_T
+
+#Obtiene la determinate de una matriz 3X3
+def determinante3X3(matrix):
+    rows = len(matrix)
+    columns = len(matrix[0])
+    newMatrix = []
+    for y in range(rows):
+        newRow = []
+        for x in range(columns):
+            if x == 2:
+                newRow.extend([matrix[y][x], matrix[y][(x + 1) % columns], matrix[y][(x + 2) % columns]])
+                break
+            newRow.append(matrix[y][x])
+        newMatrix.append(newRow)
+    diagonal1 = 0
+    diagonal2 = 0
+    for x in range(columns):
+        diagonal1 = (newMatrix[0][x] * newMatrix[1][x+1] * newMatrix[2][x+2]) + diagonal1
+        diagonal2 = -(newMatrix[0][x+2] * newMatrix[1][x+1] * newMatrix[2][x]) + diagonal2
+    determinante = diagonal1 + diagonal2
+    return determinante
+
+def inversa4X4(Matrix):
+    newMatrix = transpose(Matrix)
+    row = len(Matrix[0])
+    column = len(Matrix)
+    determinant = 0
+    cofactorList = []
+    for y in range(row):
+        exponent1 = y + 1
+        for x in range(column):
+            exponent2 = x + 1
+            exponentT = exponent2 + exponent1
+            cofactorM = []
+            if y == 0:
+                detM = []
+            verificador = False
+            for i in range(row):
+                if y == 0:
+                    rowDe = []    
+                rowCo = []
+                for k in range(column):
+                    if i != y and x != k:
+                        verificador = True
+                        rowCo.append(newMatrix[i][k])
+                        if y == 0:
+                            rowDe.append(Matrix[i][k])
+                if verificador:
+                    if y == 0:
+                        detM.append(rowDe)
+                    cofactorM.append(rowCo)
+                    verificador = False
+            deter = ((-1) ** exponentT) * determinante3X3(cofactorM)
+            cofactorList.append(deter)
+            if y == 0: 
+               deter2 = ((-1) ** exponentT) * determinante3X3(detM)
+               determinant = (Matrix[y][x] * deter2) + determinant
+    Inverse = createMatrix(4, 4, cofactorList, (1/determinant))
+    return Inverse
+
+
+def length(v0):
+ 
+  return (v0.x**2 + v0.y**2 + v0.z**2)**0.5
+
+def norm(v0):
+  v0length = length(v0)
+  if not v0length:
+    return V3(0, 0, 0)
+
+  return V3(v0.x/v0length, v0.y/v0length, v0.z/v0length)

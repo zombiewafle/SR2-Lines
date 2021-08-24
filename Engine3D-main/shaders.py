@@ -1,4 +1,5 @@
 import numpy as np
+import mathLibraries as ml
 
 def flat(render, **kwargs):
     # Iluminacion se calcula por primitiva
@@ -23,7 +24,8 @@ def flat(render, **kwargs):
     dirLight = [-render.directional_light[0],
                 -render.directional_light[1],
                 -render.directional_light[2]]
-    intensity = np.dot(triangleNormal, dirLight)
+    intensity = ml.dotProduct(triangleNormal, dirLight)
+    #intensity = np.dot(triangleNormal, dirLight)
 
     b *= intensity
     g *= intensity
@@ -50,9 +52,13 @@ def gourad(render, **kwargs):
     dirLight = [-render.directional_light[0],
                 -render.directional_light[1],
                 -render.directional_light[2]]
-    intensityA = np.dot(nA, dirLight)
-    intensityB = np.dot(nB, dirLight)
-    intensityC = np.dot(nC, dirLight)
+    intensityA = ml.dotProduct(nA, dirLight)
+    intensityB = ml.dotProduct(nB, dirLight)
+    intensityC = ml.dotProduct(nC, dirLight)
+
+    #intensityA = np.dot(nA, dirLight)
+    #intensityB = np.dot(nB, dirLight)
+    #intensityC = np.dot(nC, dirLight)
 
     intensity = intensityA *u + intensityB *v + intensityC *w
     b*= intensity
@@ -94,7 +100,8 @@ def phong(render, **kwargs):
     dirLight = [-render.directional_light[0],
                 -render.directional_light[1],
                 -render.directional_light[2]]
-    intensity = np.dot(normal, dirLight)
+    intensity = ml.dotProduct(normal, dirLight)
+    #intensity = np.dot(normal, dirLight)
 
     b*= intensity
     g*= intensity
@@ -153,7 +160,8 @@ def toon(render, **kwargs):
     dirLight = [-render.directional_light[0],
                 -render.directional_light[1],
                 -render.directional_light[2]]
-    intensity = np.dot(normal, dirLight)
+    intensity = ml.dotProduct(normal, dirLight)
+    #intensity = np.dot(normal, dirLight)
 
     if intensity > 0.85:
         intensity = 1
@@ -206,7 +214,8 @@ def textureBlend(render, **kwargs):
     dirLight = [-render.directional_light[0],
                 -render.directional_light[1],
                 -render.directional_light[2]]
-    intensity = np.dot(normal, dirLight)
+    intensity = ml.dotProduct(normal, dirLight)
+    #intensity = np.dot(normal, dirLight)
 
     if intensity < 0:
         intensity = 0
