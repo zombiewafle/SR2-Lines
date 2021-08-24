@@ -334,7 +334,6 @@ def inversa4X4(Matrix):
 
 
 def length(v0):
- 
   return (v0.x**2 + v0.y**2 + v0.z**2)**0.5
 
 def norm(v0):

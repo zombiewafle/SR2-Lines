@@ -127,7 +127,7 @@ class Renderer(object):
 
 
     def glClearColor(self, r, g, b):
-        self.clear_color = color(r, g, b)
+        self.clear_color = _color(r, g, b)
 
 
     def glClear(self):
@@ -146,7 +146,7 @@ class Renderer(object):
 
 
     def glColor(self, r, g, b):
-        self.curr_color = color(r,g,b)
+        self.curr_color = _color(r,g,b)
 
     def glPoint(self, x, y, color = None):
         if x < self.vpX or x >= self.vpX + self.vpWidth or y < self.vpY or y >= self.vpY + self.vpHeight:
@@ -259,8 +259,8 @@ class Renderer(object):
         maxX = round(max(A.x, B.x, C.x))
         maxY = round(max(A.y, B.y, C.y))
 
-        triangleNormal = ml.crossProduct(ml.subVectors(verts[1],verts[0]), ml.subVectors(verts[2],verts[0]))
-        triangleNormal = triangleNormal / ml.norm(triangleNormal)
+        triangleNormal = np.cross(np.subtract(verts[1],verts[0]), np.subtract(verts[2],verts[0]))
+        triangleNormal = triangleNormal / np.linalg.norm(triangleNormal)
 
         #triangleNormal = np.cross(np.subtract(verts[1],verts[0]), np.subtract(verts[2],verts[0]))
         #triangleNormal = triangleNormal / np.linalg.norm(triangleNormal)
@@ -461,55 +461,38 @@ class Renderer(object):
         #                                   [0, 0, -1, 0]])
 
 
-    def glLoadModel(self, filename, texture = None, translate = V3(0, 0, 0), scale = V3(1, 1, 1), rotate = V3(0,0,0)):
+    def glLoadModel(self, filename, translate = V3(0,0,0), scale = V3(1,1,1), rotate = V3(0,0,0)):
+
         model = Obj(filename)
+        modelMatrix = self.glCreateObjectMatrix(translate,scale,rotate)
+        rotationMatrix = self.glCreateRotationMatrix(rotate)
 
-        modelMatrix = self.glCreateObjectMatrix(translate, scale, rotate)
-
-        light = V3(0, 0, 1)
 
         for face in model.faces:
             vertCount = len(face)
 
-            vert0 = model.vertices[face[0][0] - 1]
-            vert1 = model.vertices[face[1][0] - 1]
-            vert2 = model.vertices[face[2][0] - 1]
+            vert0 = self.glTransform(model.vertices[face[0][0] - 1], modelMatrix)
+            vert1 = self.glTransform(model.vertices[face[1][0] - 1], modelMatrix)
+            vert2 = self.glTransform(model.vertices[face[2][0] - 1], modelMatrix)
+            a = self.glCamTransform(vert0)
+            b = self.glCamTransform(vert1)
+            c = self.glCamTransform(vert2)
 
             vt0 = model.texcoords[face[0][1] - 1]
             vt1 = model.texcoords[face[1][1] - 1]
             vt2 = model.texcoords[face[2][1] - 1]
 
-            a = self.glTransform(vert0, modelMatrix)
-            b = self.glTransform(vert1, modelMatrix)
-            c = self.glTransform(vert2, modelMatrix)
+            vn0 = self.glDirTransform(model.normals[face[0][2] - 1], rotationMatrix)
+            vn1 = self.glDirTransform(model.normals[face[1][2] - 1], rotationMatrix)
+            vn2 = self.glDirTransform(model.normals[face[2][2] - 1], rotationMatrix)
 
             if vertCount == 4:
-                vert3 = model.vertices[face[3][0] - 1]
-                vt3 = model.texcoords[face[3][1] - 1]
-                d = self.glTransform(vert3, modelMatrix)
+                vert3 = self.glTransform(model.vertices[face[3][0] - 1], modelMatrix)
+                d = self.glCamTransform(vert3)
+                vt3 =  model.texcoords[face[3][1] - 1]
+                vn3 = self.glDirTransform(model.normals[face[3][2] - 1], rotationMatrix)
 
-            _cor = _color(random.random(), random.random(), random.random())
-            normal = ml.norm(ml.crossProduct(ml.subVectors(b, a), ml.subVectors(c, a)))
-            intensity = ml.dotProduct(normal, light)
 
-            #normal = np.cross(np.subtract(vert1,vert0), np.subtract(vert2,vert0))
-            #normal = normal / np.linalg.norm(normal) # la normalizamos
-            #intensity = np.dot(normal, -light)
-
-            if intensity > 1:
-                intensity = 1
-            elif intensity < 0:
-                intensity = 0
-
-            a = self.glCamTransform(a)
-            b = self.glCamTransform(b)
-            c = self.glCamTransform(c)
+            self.glTriangle_bc(a, b, c, texCoords = (vt0,vt1,vt2), normals = (vn0,vn1,vn2), verts = (vert0,vert1,vert2) )
             if vertCount == 4:
-                d = self.glCamTransform(d)
-
-            self.glTriangle_bc(a, b, c, textCoords=(vt0, vt1, vt2),texture=texture, intensity=intensity)
-            if vertCount == 4:
-                self.glTriangle_bc(a, c, d, textCoords=(vt0, vt2, vt3), texture=texture, intensity=intensity) 
-
-            #x0 = round(vert0[0] * scale.x + translate.x)
-
+                self.glTriangle_bc(a, c, d, texCoords = (vt0,vt2,vt3), normals = (vn0,vn2,vn3), verts = (vert0,vert2,vert3))
