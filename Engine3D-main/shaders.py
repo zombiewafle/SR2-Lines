@@ -1,5 +1,115 @@
 import numpy as np
 import mathLibraries as ml
+import random
+
+
+def static(render, **kwargs):
+    #col = random.randint()
+    r = random.random() *2
+    g = random.random() *2
+    b = random.random() *2
+
+
+     # Iluminacion por pixel
+
+    u, v, w = kwargs['baryCoords']
+    tA, tB, tC = kwargs['texCoords']
+    #b, g, r = kwargs['color']
+    nA, nB, nC = kwargs['normals']
+
+
+    if render.active_texture:
+        tx = tA[0] * u + tB[0] * v + tC[0] * w
+        ty = tA[1] * u + tB[1] * v + tC[1] * w
+        texColor = render.active_texture.getColor(tx, ty)
+        b *= texColor[0] / 255
+        g *= texColor[1] / 255
+        r *= texColor[2] / 255
+
+    nX = nA[0] * u + nB[0] * v + nC[0] * w
+    nY = nA[1] * u + nB[1] * v + nC[1] * w
+    nZ = nA[2] * u + nB[2] * v + nC[2] * w
+
+    normal = (nX, nY, nZ)
+
+    dirLight = [-render.directional_light[0],
+                -render.directional_light[1],
+                -render.directional_light[2]]
+    intensity = ml.dotProduct(normal, dirLight)
+    #intensity = np.dot(normal, dirLight)
+
+    b*= intensity
+    g*= intensity
+    r*= intensity
+
+
+    if intensity > 0:
+        return r,g,b
+    else:
+        return 0,0,0
+
+def glow (render, **kwargs):
+    u, v, w = kwargs['baryCoords']
+    tA, tB, tC = kwargs['texCoords']
+    b, g, r = kwargs['color']
+    triangleNormal = kwargs['triangleNormal']
+    nA, nB, nC = kwargs['normals']
+
+    b/= 255
+    g/= 255
+    r/= 255
+
+    if render.active_texture:
+        tx = tA[0] * u + tB[0] * v + tC[0] * w
+        ty = tA[1] * u + tB[1] * v + tC[1] * w
+        texColor = render.active_texture.getColor(tx, ty)
+
+        b *= texColor[0] / 255
+        g *= texColor[1] / 255
+        r *= texColor[2] / 255
+
+    nX = nA[0] * u + nB[0] * v + nC[0] * w
+    nY = nA[1] * u + nB[1] * v + nC[1] * w
+    nZ = nA[2] * u + nB[2] * v + nC[2] * w
+
+    normal = (nX, nY, nZ)
+
+    dirLight = [-render.directional_light[0],
+                -render.directional_light[1],
+                -render.directional_light[2]]
+
+    intensity = ml.dotProduct(triangleNormal, dirLight)
+    #intensity = np.dot(triangleNormal, dirLight)
+    if intensity <= 0:
+        intensity = 0
+
+    b *= intensity
+    g *= intensity
+    r *= intensity
+
+    camForward = [ml.firstItemFunction(render.camMatrix), ml.secondItemFunction(render.camMatrix), ml.thirdItemFunction(render.camMatrix), ml.fourthItemFunction(render.camMatrix)]
+
+    #camForward = [render.camMatrix(0,2),
+    #              render.camMatrix(1,2),
+    #              render.camMatrix(2,2)]
+
+    glowAmount = 1 - ml.dotProduct(normal, camForward)
+    glowColor = [0,0,1]
+
+    r += glowColor[0] * glowAmount
+    g += glowColor[1] * glowAmount
+    b += glowColor[2] * glowAmount
+
+    if r > 1:
+        r =1
+
+    if g > 1:
+        g =1
+
+    if b > 1:
+        b =1
+
+    return r, g, b
 
 def flat(render, **kwargs):
     # Iluminacion se calcula por primitiva
@@ -40,7 +150,7 @@ def flat(render, **kwargs):
 def gourad(render, **kwargs):
     # Iluminacion por vertice, se interpola
     # la iluminacion por cada pixel
-    
+
     u, v, w = kwargs['baryCoords']
     b, g, r = kwargs['color']
     nA, nB, nC = kwargs['normals']
@@ -73,7 +183,7 @@ def gourad(render, **kwargs):
 
 def phong(render, **kwargs):
     # Iluminacion por pixel
-    
+
     u, v, w = kwargs['baryCoords']
     tA, tB, tC = kwargs['texCoords']
     b, g, r = kwargs['color']
@@ -234,7 +344,74 @@ def textureBlend(render, **kwargs):
     return r, g, b
 
 
+def normalMap(render, **kwargs):
+    A, B, C = kwargs['verts']
+    u, v, w = kwargs['baryCoords']
+    tA, tB, tC = kwargs['texCoords']
+    b, g, r = kwargs['color']
+    nA, nB, nC = kwargs['normals']
+
+    b/= 255
+    g/= 255
+    r/= 255
+
+    if render.active_texture:
+        tx = tA[0] * u + tB[0] * v + tC[0] * w
+        ty = tA[1] * u + tB[1] * v + tC[1] * w
+        texColor = render.active_texture.getColor(tx, ty)
+        b *= texColor[0] / 255
+        g *= texColor[1] / 255
+        r *= texColor[2] / 255
+
+    nX = nA[0] * u + nB[0] * v + nC[0] * w
+    nY = nA[1] * u + nB[1] * v + nC[1] * w
+    nZ = nA[2] * u + nB[2] * v + nC[2] * w
+    normal = (nX, nY, nZ)
+
+    dirLight = np.array(render.directional_light)
 
 
+    if render.normal_map:
+        texNormal = render.normal_map.getColor(tx, ty)
+        texNormal = [(texNormal[2] / 255) * 2 - 1,
+                     (texNormal[1] / 255) * 2 - 1,
+                     (texNormal[0] / 255) * 2 - 1]
 
+        texNormal = texNormal / np.linalg.norm(texNormal)
 
+        edge1 = np.subtract(B, A)
+        edge2 = np.subtract(C, A)
+        deltaUV1 = np.subtract(tB, tA)
+        deltaUV2 = np.subtract(tC, tA)
+
+        f = 1 / (deltaUV1[0] * deltaUV2[1] - deltaUV2[0] * deltaUV1[1])
+
+        tangent = [f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]),
+                   f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]),
+                   f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2])]
+        tangent = tangent / np.linalg.norm(tangent)
+        tangent = np.subtract(tangent, np.multiply(np.dot(tangent, normal), normal))
+        tangent = tangent / np.linalg.norm(tangent)
+
+        bitangent = np.cross(normal, tangent)
+        bitangent = bitangent / np.linalg.norm(bitangent)
+
+        tangentMatrix = np.matrix([[tangent[0],  bitangent[0],  normal[0]],
+                                   [tangent[1],  bitangent[1],  normal[1]],
+                                   [tangent[2],  bitangent[2],  normal[2]]])
+
+        texNormal = tangentMatrix @ texNormal
+        texNormal = texNormal.tolist()[0]
+        texNormal = texNormal / np.linalg.norm(texNormal)
+        intensity = np.dot(texNormal, -dirLight)
+    else:
+        intensity = np.dot(normal, -dirLight)
+
+    b*= intensity
+    g*= intensity
+    r*= intensity
+
+    if intensity > 0:
+        return r, g, b
+    else:
+        return 0,0,0

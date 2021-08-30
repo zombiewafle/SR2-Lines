@@ -14,7 +14,8 @@ rend.directional_light = V3(1,0,0)
 
 rend.active_texture = Texture('models/earthDay.bmp')
 rend.active_texture2 = Texture('models/earthNight.bmp')
-rend.active_shader = toon
+#Static, Glow, Toon, 
+rend.active_shader = static
 
 rend.glLoadModel("models/earth.obj",
                  translate = V3(0, 0, -10),
@@ -22,5 +23,3 @@ rend.glLoadModel("models/earth.obj",
                  rotate = V3(0, 80, 0) )
 
 rend.glFinish("output.bmp")
-
-

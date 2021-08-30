@@ -1,4 +1,4 @@
-# Archivo creado para almanecar todas las operaciones 
+# Archivo creado para almanecar todas las operaciones
 #matematicas usadas en el documento gl.py
 
 
@@ -24,15 +24,15 @@ def dotProduct(a,b):
     for x,y in zip(a,b):
         dotProduct = dotProduct + (x*y)
     return dotProduct
-    
+
     #print(dotProduct)
 
 
 #dotProduct(a,b)
 
-#Funcion para sumar vectores de 3 elementos 
-#Notas: Los vectores con una mayor cantidad de elementos, ejemplo: 
-# a = [1,2,3,4] 
+#Funcion para sumar vectores de 3 elementos
+#Notas: Los vectores con una mayor cantidad de elementos, ejemplo:
+# a = [1,2,3,4]
 # El elemento 4 sera ignorado
 
 def sumVectors(a,b):
@@ -40,7 +40,7 @@ def sumVectors(a,b):
     sub2 = a[1] + b[1]
     sub3 = a[2] + b[2]
     sub = [sub1,sub2,sub3]
-    
+
     return sub
 
    # print(i)
@@ -53,7 +53,7 @@ def subVectors(a,b):
     sub2 = a[1] - b[1]
     sub3 = a[2] - b[2]
     sub = ([sub1,sub2,sub3])
-    
+
     return sub
     #print(sub)
 
@@ -61,7 +61,7 @@ def subVectors(a,b):
 
 def crossProduct(a,b):
     #A × B = (bz – cy)i + (cx – az)j + (ay – bx)k
-    
+
     crossProduct1 = ((a[1])*(b[2])) - ((a[2])*(b[1]))
     crossProduct2 = ((a[2])*(b[0])) - ((a[0])*(b[2]))
     crossProduct3 = ((a[0])*(b[1])) - ((a[1])*(b[0]))
@@ -69,7 +69,7 @@ def crossProduct(a,b):
     crossProduct = ([crossProduct1 , crossProduct2 , crossProduct3])
 
     return crossProduct
-    
+
     #print(np.array(crossProduct))
 
 #crossProduct(a,b)
@@ -79,7 +79,7 @@ def crossProduct(a,b):
 #    min_valueA = min(a)
 #    for i in range(0, len(a)):
 #        a[i] = (a[i] - min_valueA) / (max_valueA - min_valueA)
-#        
+#
 #    return a
 
 #def norm(a):
@@ -97,30 +97,30 @@ def crossProduct(a,b):
 def createMatrix(row, col, listOfLists, multi = 1):
     matrix = []
     for i in range(row):
-        
+
         rowList = []
         for j in range(col):
-            
+
             # you need to increment through dataList here, like this:
-            rowList.append((listOfLists[row * i + j]) * multi)    
-                    
+            rowList.append((listOfLists[row * i + j]) * multi)
+
         matrix.append(rowList)
-    
+
     return matrix
 
 #def createMatrix(row, col, listOfLists):
 #    matrix = []
 #    for i in range(row):
-#        
+#
 #        rowList = []
 #        for j in range(col):
-#            
+#
 #            # you need to increment through dataList here, like this:
-#            rowList.append(listOfLists[row * i + j])    
-#                    
+#            rowList.append(listOfLists[row * i + j])
+#
 #        matrix.append(rowList)
-#        
-#        
+#
+#
 #
 #        #for i in range(len(matrix)):
 #        #    for j in range(len(matrix[0])):
@@ -311,7 +311,7 @@ def inversa4X4(Matrix):
             verificador = False
             for i in range(row):
                 if y == 0:
-                    rowDe = []    
+                    rowDe = []
                 rowCo = []
                 for k in range(column):
                     if i != y and x != k:
@@ -326,7 +326,7 @@ def inversa4X4(Matrix):
                     verificador = False
             deter = ((-1) ** exponentT) * determinante3X3(cofactorM)
             cofactorList.append(deter)
-            if y == 0: 
+            if y == 0:
                deter2 = ((-1) ** exponentT) * determinante3X3(detM)
                determinant = (Matrix[y][x] * deter2) + determinant
     Inverse = createMatrix(4, 4, cofactorList, (1/determinant))
@@ -342,3 +342,33 @@ def norm(v0):
     return V3(0, 0, 0)
 
   return V3(v0.x/v0length, v0.y/v0length, v0.z/v0length)
+
+
+
+def firstItemFunction(a):
+    firstInternalList = a[0]
+    firstItem = firstInternalList[2]
+
+
+    return firstItem
+
+def secondItemFunction(a):
+    secondInternalList = a[1]
+
+    secondtItem = secondInternalList[2]
+
+    return secondtItem
+
+def thirdItemFunction(a):
+    thirdInternalList = a[2]
+
+    thirdItem = thirdInternalList[2]
+
+    return thirdItem
+
+def fourthItemFunction(a):
+    fourthInternalLists = a[3]
+
+    fourthItem = fourthInternalLists[2]
+
+    return fourthItem

@@ -279,18 +279,18 @@ class Renderer(object):
                             self.zbuffer[x][y] = z
 
                             if self.active_shader:
-                                
+
                                 r,g,b = self.active_shader(self,
-                                                           verts = verts, 
+                                                           verts = verts,
                                                            baryCoords=(u,v,w),
                                                            texCoords=texCoords,
-                                                           normals=normals, 
+                                                           normals=normals,
                                                            triangleNormal=triangleNormal,
                                                            color = color or self.curr_color)
 
                                 self.glPoint(x,y, _color( r, g, b) )
 
-                                 
+
                             else:
                                 self.glPoint(x,y, color or self.curr_color )
 
@@ -332,10 +332,10 @@ class Renderer(object):
         #print(transVertex)
         #print(transVertex4)
 
-        transVertex4 = V3(transVertex4[0]/transVertex4[3], 
-                         transVertex4[1]/transVertex4[3],   
+        transVertex4 = V3(transVertex4[0]/transVertex4[3],
+                         transVertex4[1]/transVertex4[3],
                          transVertex4[2]/transVertex4[3])
-       
+
         return transVertex4
 
 
@@ -357,7 +357,7 @@ class Renderer(object):
                       [0,cos(pitch),-sin(pitch),0],
                       [0,sin(pitch),cos(pitch),0],
                       [0,0,0,1]]
-        
+
         rotationY = [[cos(yaw),0,sin(yaw),0],
                       [0,1,0,0],
                       [-sin(yaw),0,cos(yaw),0],
@@ -394,7 +394,7 @@ class Renderer(object):
         #translMatrix = [1,0,0,translate.x,0,1,0,translate.y,0,0,1,translate.z,0,0,0,1]
 #
         #scaMatrix = [scale.x,0,0,0,0,scale.y,0,0,0,0,scale.z,0,0,0,0,1]
-        
+
         translateMatrix = [[1,0,0,translate.x],
                                     [0,1,0,translate.y],
                                     [0,0,1,translate.z],
@@ -425,9 +425,9 @@ class Renderer(object):
 
 
     def glViewMatrix(self, translate = V3(0,0,0), rotate = V3(0,0,0)):
-        camMatrix = self.glCreateObjectMatrix(translate, V3(1,1,1), rotate)
+        self.camMatrix = self.glCreateObjectMatrix(translate, V3(1,1,1), rotate)
         #self.viewMatrix = np.linalg.inv(camMatrix)
-        self.viewMatrix = ml.inversa4X4(camMatrix)
+        self.viewMatrix = ml.inversa4X4(self.camMatrix)
 
 
     def glLookAt(self, eye, camPosition = V3(0,0,0)):
@@ -439,7 +439,7 @@ class Renderer(object):
                      [right[1],up[1],forward[1],camPosition.y],
                      [right[2],up[2],forward[2],camPosition.z],
                      [0,0,0,1]]
-        
+
         self.viewMatrix = ml.inversa4X4(camMatrix)
 
 
@@ -447,7 +447,7 @@ class Renderer(object):
 
         t = tan(ml.deg2rads(fov) / 2) * n
         r = t * self.vpWidth / self.vpHeight
-        
+
         #projMatrix = [n/r, 0, 0, 0,0, n/t, 0, 0,0, 0, -(f+n)/(f-n), -(2*f*n)/(f-n),0, 0, -1, 0]
 
         self.glProjectionMatrix = [[n/r, 0, 0, 0],
