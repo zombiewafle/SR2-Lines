@@ -2,6 +2,244 @@ import numpy as np
 import mathLibraries as ml
 import random
 
+#Dependiendo de donde venga la luz, el color cambiara
+#Donde el rojo es donde la luz pega directamente
+#Amarillo la luz no golpea directamente
+#Azul, la luz golpea muy poco o nada
+def thermal(render, **kwargs):
+    # Iluminacion por pixel
+
+    u, v, w = kwargs['baryCoords']
+    tA, tB, tC = kwargs['texCoords']
+    b, g, r = kwargs['color']
+    nA, nB, nC = kwargs['normals']
+
+    b/= 255
+    g/= 255
+    r/= 255
+
+    if render.active_texture:
+        tx = tA[0] * u + tB[0] * v + tC[0] * w
+        ty = tA[1] * u + tB[1] * v + tC[1] * w
+        texColor = render.active_texture.getColor(tx, ty)
+        b *= texColor[0] / 255
+        g *= texColor[1] / 255
+        r *= texColor[2] / 255
+
+    nX = nA[0] * u + nB[0] * v + nC[0] * w
+    nY = nA[1] * u + nB[1] * v + nC[1] * w
+    nZ = nA[2] * u + nB[2] * v + nC[2] * w
+
+    normal = (nX, nY, nZ)
+
+    dirLight = [-render.directional_light[0],
+                -render.directional_light[1],
+                -render.directional_light[2]]
+    intensity = ml.dotProduct(normal, dirLight)
+
+
+    #b*= intensity
+    #g*= intensity
+    #r*= intensity
+
+    #glowAmount = 1 - ml.dotProduct(normal, camForward)
+    heatColor = [1,0,0]
+    coldColor = [0,0,1]
+
+    colorIntensity = 1 - intensity
+
+    if colorIntensity > 0.99:
+        r += heatColor[0] * colorIntensity
+        g += heatColor[1] * colorIntensity
+        b += heatColor[2] * colorIntensity
+
+        if r > 1:
+            r =1.00
+
+        if g > 1:
+            g =0.00
+
+        if b > 1:
+            b =0
+
+        return 1,0,0
+
+
+
+
+
+    elif colorIntensity > 0.7 :
+        r += heatColor[0] * colorIntensity
+        g += heatColor[1] * colorIntensity
+        b += heatColor[2] * colorIntensity
+
+        if r > 1:
+            r = 0.55
+
+        if g > 1:
+            g = 0.55
+
+        if b > 1:
+            b = 0
+
+        return 0.55,0.55,0.00
+
+
+    elif colorIntensity > 0.6 :
+        r += heatColor[0] * colorIntensity
+        g += heatColor[1] * colorIntensity
+        b += heatColor[2] * colorIntensity
+
+        if r > 1:
+            r = 0.55
+
+        if g > 1:
+            g = 0.55
+
+        if b > 1:
+            b = 0.25
+
+        return 0.00,0.00,1.00
+
+
+
+    #elif colorIntensity < 0.5:
+    #    r += heatColor[0] * colorIntensity
+    #    g += heatColor[1] * colorIntensity
+    #    b += heatColor[2] * colorIntensity
+
+    #    if r > 1:
+    #        r = 0
+
+    #    if g > 1:
+    #        g = 0
+
+    #    if b > 1:
+    #        b = 1
+
+    #    return 0.00,0.00,1.00
+
+
+    else:
+        r += heatColor[0] * colorIntensity
+        g += heatColor[1] * colorIntensity
+        b += heatColor[2] * colorIntensity
+
+        if r > 1:
+            r = 0
+
+        if g > 1:
+            g = 0
+
+        if b > 1:
+            b = 1
+
+        return 0.00,0.00,0.55
+
+
+
+
+    #else:
+    #    r += coldColor[0] * colorIntensity
+    #    b += coldColor[2] * colorIntensity
+    #    g += coldColor[1] * colorIntensity
+
+    #    if r > 1:
+    #        r =0
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =1
+
+    #    return r,g,b
+
+
+
+
+
+    #if colorIntensity >= 0.7:
+    #    r += heatColor[0] * colorIntensity
+    #    g += heatColor[1] * colorIntensity
+    #    b += heatColor[2] * colorIntensity
+
+    #    if r > 1:
+    #        r =1
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =0
+
+    #    return r,g,b
+
+    #elif colorIntensity == 0.50:
+    #    r += heatColor[0] * colorIntensity
+    #    g += heatColor[1] * colorIntensity
+    #    b += heatColor[2] * colorIntensity
+
+    #    if r > 1:
+    #        r =0.4
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =0.6
+
+    #    return r,g,b
+
+    #elif colorIntensity == 0.4:
+    #    r += heatColor[0] * colorIntensity
+    #    g += heatColor[1] * colorIntensity
+    #    b += heatColor[2] * colorIntensity
+
+    #    if r > 1:
+    #        r =0.3
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =0.70
+
+
+    #elif colorIntensity == 0.25:
+    #    r += heatColor[0] * colorIntensity
+    #    g += heatColor[1] * colorIntensity
+    #    b += heatColor[2] * colorIntensity
+
+    #    if r > 1:
+    #        r =0.2
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =0.80
+
+    #    return r,g,b
+
+
+    #else:
+    #    r += coldColor[0] * colorIntensity
+    #    b += coldColor[2] * colorIntensity
+    #    g += coldColor[1] * colorIntensity
+
+    #    if r > 1:
+    #        r =0
+
+    #    if g > 1:
+    #        g =0
+
+    #    if b > 1:
+    #        b =1
+
+    #    return r,g,b
+
+
 
 def static(render, **kwargs):
     #col = random.randint()

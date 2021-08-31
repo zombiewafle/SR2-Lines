@@ -10,12 +10,13 @@ height = 540
 
 rend = Renderer(width, height)
 
-rend.directional_light = V3(1,0,0)
+rend.directional_light = V3(0,1,0)
 
 rend.active_texture = Texture('models/earthDay.bmp')
 rend.active_texture2 = Texture('models/earthNight.bmp')
-#Static, Glow, Toon, 
-rend.active_shader = static
+#Static, Glow, Toon,Thermal
+
+rend.active_shader = thermal
 
 rend.glLoadModel("models/earth.obj",
                  translate = V3(0, 0, -10),
